@@ -1,0 +1,97 @@
+#!/usr/bin/env perl
+
+use 5.10.0;
+use strict;
+use autodie;
+use warnings;
+
+# custom search paths
+BEGIN {
+    use File::Basename;
+    use Cwd qw/abs_path/;
+
+    my $alf = dirname abs_path $0;
+    push @INC, $alf.'/lib', $alf.'/tasks';
+}
+
+use Alfred::Cli;
+use Alfred::Task;
+use Alfred::Database;
+
+
+sub usage {
+    my $help = <<"HELP";
+
+Alfred - Easily manage your server tasks!
+
+\$ alfred install      - Install itself to the current user path.
+\$ alfred help         - Show this help message.
+\$ alfred help <task>  - Show help information for the given task.
+\$ alfred new <task>   - Create a new task.
+\$ alfred run <task>   - Execute the given task.
+
+** Tasks names should be valid Perl module names, eg.:
+
+    - Backup::Database
+    - Site::FTP::Sync
+    - etc
+
+HELP
+
+    say($help);
+    exit;
+}
+
+my $order = Alfred::Cli::get_order();
+my $task  = Alfred::Cli::get_task();
+
+
+## HELP FROM TASK
+if ('help' eq $order || @ARGV == 0) {
+    if ($task->{task}) {
+        Alfred::Task::task_help $task->{task};
+        exit;
+    }
+
+    usage();
+}
+
+## RUN TASK
+elsif ('run' eq $order) {
+    if ($task->{task}) {
+        Alfred::Task::task_run $task;
+        exit;
+    }
+
+    say('No task was given. Aborting...');
+    exit;
+}
+
+## NEW TASK
+elsif ('new' eq $order) {
+    if ($task->{task}) {
+        if (Alfred::Task::task_exists $task->{task}) {
+            say("Task '${\$task->{task}}' already exists.");
+            exit;
+        }
+
+        my $path = Alfred::Task::task_new $task->{task};
+
+        if (! $path) {
+            say("There was an error trying to create task '${\$task->{task}}'.");
+        }
+        else {
+            say($path);
+        }
+    }
+}
+
+## INSTALL ALFRED TO USER PATH
+elsif ('install' eq $order) {
+    open(my $FH, '>>', $ENV{HOME}.'/.bashrc');
+    print $FH "\n# Alfred bin\nexport PATH=\$PATH:". dirname(abs_path($0)) ."\n";
+    close($FH);
+
+    say('Alfred was added to the user path!');
+    exit;
+}
