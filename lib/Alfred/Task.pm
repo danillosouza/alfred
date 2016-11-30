@@ -20,7 +20,7 @@ our $VERSION   = 1.00;
 ## Returns path of the task module.
 sub task_path {
     my $task = shift;
-    $task =~ s/::/\//;
+    $task =~ s/::/\//g;
     $task = dirname(abs_path($0)) . "/tasks/${task}.pm";
 
     return $task;
@@ -67,7 +67,6 @@ sub task_run {
             require $path;
             chdir getcwd;
             eval("${\$data->{task}}::main(\$data->{options})");
-            exit;
         }
     }
 }
