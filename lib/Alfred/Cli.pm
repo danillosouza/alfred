@@ -11,7 +11,7 @@ our $VERSION   = 1.00;
 ## Get requested command.
 sub get_order {
     return $ARGV[0] if (@ARGV);
-    return null;
+    return undef;
 }
 
 
