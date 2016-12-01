@@ -99,10 +99,39 @@ our \@EXPORT_OK = qw//;
 our \$VERSION   = 1.00;
 
 
-## Your code goes here...
+##
+## Entry Point
+sub main {
 
+}
+
+
+##
+## Help text for your task
+sub help {
+
+}
 
 42;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+${task} - ** Short description of yout Task **
+
+=head1 SYNOPSIS
+
+** What your task does **
+
+=head1 DESCRIPTION
+
+** Full description and any other info you want to include **
+
+=cut
+
 TASK
 
             close $FH;
