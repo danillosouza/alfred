@@ -177,20 +177,25 @@ elsif ('purge' eq $order) {
         if (! $task->{task});
 
     my $task_name = my $task = $task->{task};
+    my $tasks_dir = dirname(abs_path($0)) . '/tasks';
 
-    unless (Alfred::Task::task_exists $task_name) {
+    $task =~ s/::/\//g;
+
+    unless (defined Alfred::Task::task_exists($task_name)
+            || -d "${tasks_dir}/${task}") {
+
         say("Task '${task_name}' doesn't exists.");
         exit;
     }
 
-    $task =~ s/^([^:]+)(?:::.+)/$1/;
     $task = dirname(abs_path($0)) . "/tasks/${task}";
 
-    # verify if is file or dir
+    # verify if is file or dir (or both)
     if (-e "${task}.pm") {
         unlink "${task}.pm";
     }
-    elsif (-d $task) {
+
+    if (-d $task) {
         rmtree $task;
     }
 
