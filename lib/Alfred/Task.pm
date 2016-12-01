@@ -102,7 +102,8 @@ our \$VERSION   = 1.00;
 ##
 ## Entry Point
 sub main {
-
+    my \$params = shift;
+    
 }
 
 

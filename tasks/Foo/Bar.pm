@@ -1,10 +1,6 @@
 package Foo::Bar;
 require Exporter;
 
-##
-## Dummy task for demonstration.
-##
-
 use 5.10.0;
 use strict;
 use autodie;
@@ -19,6 +15,8 @@ our $VERSION   = 1.00;
 ##
 ## Entry Point
 sub main {
+    my $params = shift;
+
     say('Heeeeeey!');
 }
 
