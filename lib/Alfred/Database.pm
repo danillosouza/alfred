@@ -19,7 +19,7 @@ sub init_db {
         or die("Error stablishing database connection.\n");
 
     my $sql_create = join '', (
-        'CREATE TABLE IF NOT EXISTS main.tasks (',
+        'CREATE TABLE IF NOT EXISTS main.tasks (',  # create table if not exists
         'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,',
         'task TEXT NOT NULL,',
         'params TEXT,',
@@ -28,8 +28,8 @@ sub init_db {
         'runned_at DATETIME)'
     );
 
-    # create table if not exists
     $dbh->do($sql_create);
+
     return $dbh;
 }
 
