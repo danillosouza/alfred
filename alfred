@@ -21,6 +21,7 @@ use File::Path qw/rmtree/;
 use File::Find qw/find/;
 
 use Alfred::Cli;
+use Alfred::Cron;
 use Alfred::Task;
 use Alfred::Queue;
 use Alfred::Daemon;
@@ -30,19 +31,32 @@ sub usage {
 
 Alfred - Easily manage your server tasks!
 
-\$ alfred install          - Install itself to the current user path.
-\$ alfred help             - Show this help message.
-\$ alfred daemon           - Starts Alfred daemon.
-\$ alfred dismiss          - Stops Alfred daemon.
-\$ alfred list             - List all available tasks.
-\$ alfred queue            - List all tasks currently in the queue.
-\$ alfred help <task>      - Show help information for the given task.
-\$ alfred new <task>       - Create a new task.
-\$ alfred purge <task>     - Destroy the given task.
-\$ alfred run <task>       - Execute the given task.
-\$ alfred schedule <task>  - Add the given task to the daemon queue.
+\$ alfred install                 - Install itself to the current user path.
+\$ alfred help                    - Show this help message.
+\$ alfred daemon                  - Starts Alfred daemon.
+\$ alfred dismiss                 - Stops Alfred daemon.
+\$ alfred list                    - List all available tasks.
+\$ alfred queue                   - List all tasks currently in the queue.
+\$ alfred help <task>             - Show help information for the given task.
+\$ alfred new <task>              - Create a new task.
+\$ alfred purge <task>            - Destroy the given task.
+\$ alfred run <task>              - Execute the given task.
+\$ alfred schedule <task>         - Add the given task to the daemon queue.
+\$ alfred cron <crontime> <task>  - Add a new crontab job to run the given task.
 
-** Tasks names should be valid Perl module names, eg.:
+
+* `crontime` must be a valid crontab interval.
+    e.g.:  "* * * * *"
+           "0 0,12 1 */2 *"
+           etc
+
+* Optionally, you can put a username with the crontime to run the task with
+  the specified user, assuming the username you want to use is 'bruce', do:
+
+  "\@bruce * * * * *"
+
+
+[[ Tasks names should be valid Perl module names ]]
 
     - Backup::Database
     - Site::FTP::Sync
@@ -203,4 +217,26 @@ elsif ('purge' eq $order) {
         if -e "${task}.pm" or -d $task;
 
     say("The task '${task_name}' was removed.");
+}
+
+
+
+##
+## ADD A NEW CRONJOB TO RUN THE GIVEN TASK
+elsif ('cron' eq $order) {
+    # fixing task schema
+    my($crontime, $username) = Alfred::Cron::crontime_get_user($task->{task});
+    my $taskname = shift @{$task->{options}};
+    $task->{task} = $taskname;
+
+    die("Invalid crontab interval.\n${crontime}\n")
+        unless Alfred::Cron::is_valid_crontime $crontime;
+
+    my $cronjob = {
+        username => $username,
+        interval => $crontime,
+        task     => $task
+    };
+
+    Alfred::Cron::new_job $cronjob;
 }
