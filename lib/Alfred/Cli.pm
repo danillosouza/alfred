@@ -1,6 +1,11 @@
 package Alfred::Cli;
 require Exporter;
 
+use 5.10.0;
+use strict;
+use autodie;
+use warnings;
+
 our @ISA       = qw/Exporter/;
 our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;

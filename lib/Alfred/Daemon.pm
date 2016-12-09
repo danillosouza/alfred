@@ -1,6 +1,11 @@
 package Alfred::Daemon;
 require Exporter;
 
+use 5.10.0;
+use strict;
+use autodie;
+use warnings;
+
 use Proc::Daemon;
 use File::Basename;
 use File::Touch;
