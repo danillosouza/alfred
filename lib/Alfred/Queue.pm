@@ -1,6 +1,11 @@
 package Alfred::Queue;
 require Exporter;
 
+use 5.10.0;
+use strict;
+use autodie;
+use warnings;
+
 use Alfred::Database qw/init_db/;
 
 our @ISA       = qw/Exporter/;

@@ -1,6 +1,11 @@
 package Alfred::Database;
 require Exporter;
 
+use 5.10.0;
+use strict;
+use autodie;
+use warnings;
+
 use DBI;
 use File::Basename;
 use Cwd qw/abs_path/;
