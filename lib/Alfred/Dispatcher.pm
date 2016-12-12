@@ -119,11 +119,19 @@ sub install {
     my $self = shift;
     my $task = shift;
 
-    open(my $FH, '>>', $ENV{HOME}.'/.bashrc');
-    print $FH "\n# Alfred bin\nexport PATH=\$PATH:". dirname(abs_path($0)) ."\n";
-    close($FH);
+    unless ($ENV{ALFREDPATH} && $ENV{ALFREDBIN}) {
+        open(my $FH, '>>', $ENV{HOME}.'/.bashrc');
+        print $FH "\n# Alfred bin\n";
+        print $FH "export PATH=\$PATH:". dirname(abs_path($0)) ."\n";
+        print $FH "export ALFREDPATH=". dirname(abs_path($0)) ."\n";
+        print $FH "export ALFREDBIN=". dirname(abs_path($0)) ."/alfred\n";
+        close($FH);
 
-    say('Alfred was added to the user path!');
+        say('Alfred was added to the user path!');
+    }
+    else {
+        say('Alfred is already installed on ' . $ENV{ALFREDPATH});
+    }
 }
 
 
