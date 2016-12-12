@@ -40,8 +40,6 @@ sub crontime_get_user {
 ##
 ##
 sub new_job {
-    use Data::Dumper qw/Dumper/;
-
     my $cronjob = shift;
 
     # creating the crontab entry
