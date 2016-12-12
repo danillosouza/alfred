@@ -17,7 +17,7 @@ our $VERSION   = 1.00;
 ##
 ## Verify if a crontab interval is valid
 sub is_valid_crontime {
-    return 1 if shift =~ /^((\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}\/\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)\s+){3}([A-Z][a-z]{2}|\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}\/\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)\s+([A-Z][a-z]{2}|\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}\/\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)$/;
+    return 1 if shift =~ /^((\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}-\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)\s+){3}([A-Z][a-z]{2}|\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}-\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)\s+([A-Z][a-z]{2}|\*\/\d{1,2}|\d{1,2}\/\*|\d{1,2}-\d{1,2}|\d{1,2}(?:\,\d{1,2})?|\*)$/;
     undef;
 }
 
@@ -46,13 +46,15 @@ sub new_job {
 
     # creating the crontab entry
     my $cron     = Config::Crontab->new( -owner => $cronjob->{username} );
-    my $cronline = $cronjob->{interval} ."\t". $cronjob->{username}."\t"
-                   . 'alfred run ' . $cronjob->{task}{task}." "
+    my $cronline = $cronjob->{interval} ."\t"
+                   . $ENV{ALFREDBIN} . ' run ' . $cronjob->{task}{task}." "
                    . join ' ', @{$cronjob->{task}{options}};
 
-    my $block = Config::Crontab::Block->new( -data => $cronline );
+    $cronline =~ s/^\s+|\s+$//g;
 
     # add the block at the end of user crontab
+    my $block = Config::Crontab::Block->new( -data => $cronline );
+    $cron->read;
     $cron->last($block);
     $cron->write;
 }
