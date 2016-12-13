@@ -9,6 +9,9 @@ use warnings;
 use File::Basename;
 use File::Path qw/make_path/;
 use Cwd qw/abs_path getcwd/;
+use Try::Tiny;
+
+use Alfred::Logger;
 
 our @ISA       = qw/Exporter/;
 our @EXPORT    = qw//;
@@ -63,10 +66,20 @@ sub task_run {
 
     if (task_exists $data->{task}) {
         # try to run 'main' method
-        eval {
+        try {
             require $path;
             chdir getcwd;
-            eval("${\$data->{task}}::main(\$data->{options})");
+            my $response = eval("${\$data->{task}}::main(\$data->{options})");
+
+            unless ($@) {
+                Alfred::Logger::success $data->{task}, $response;
+            }
+            else {
+                Alfred::Logger::error $data->{task}, $@;
+            }
+        }
+        catch{
+            Alfred::Logger::error $data->{task}, $_;
         }
     }
 }
