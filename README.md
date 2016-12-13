@@ -7,7 +7,7 @@ Alfred is a command line tool writen in Perl to manage server tasks as Perl modu
 First, you'll ned to clone the repository and instal the dependencies:
 
 ```sh
-$ git glone ssh://[user]@laguna/rep/alfred
+$ git glone https://github.com/danillosouza/alfred.git
 $ cd alfred
 $ carton install
 ```
@@ -27,16 +27,17 @@ $ perl -MCPAN -e install
 ## How do I use it?
 
 Alfred is very simple to use, it provides a few commands:
- * **install**          - Install itself to the current user path.
- * **daemon**           - Starts Alfred daemon.
- * **dismiss**          - Stops Alfred daemon.
- * **list**             - List all available tasks.
- * **queue**            - List all tasks currently in the queue.
- * **help <task>**      - Show help information for the given task.
- * **new <task>**       - Create a new task.
- * **purge <task>**     - Destroy the given task.
- * **run <task>**       - Execute the given task.
- * **schedule <task>**  - Add the given task to the daemon queue.
+ * **install**                 - Install itself to the current user path.
+ * **daemon**                  - Starts Alfred daemon.
+ * **dismiss**                 - Stops Alfred daemon.
+ * **list**                    - List all available tasks.
+ * **queue**                   - List all tasks currently in the queue.
+ * **help <task>**             - Show help information for the given task.
+ * **create <task>**           - Create a new task.
+ * **purge <task>**            - Destroy the given task.
+ * **run <task>**              - Execute the given task.
+ * **schedule <task>**         - Add the given task to the daemon queue.
+ * **cron <crontime> <task>**  - Add a new crontab job to run the given task.
 
 ### Some practical examples
 
@@ -62,7 +63,7 @@ $ alfred run My::Task --my --custom --params
 
 Naturally, you'll want to create your own tasks, and it's simple:
 ```sh
-$ alfred new My::Task
+$ alfred create My::Task
 # He then will show you the path where the Task file was created, so you can code it
 ```
 
@@ -90,4 +91,14 @@ $ alfred queue
 
 # Stops the daemon, if it's running
 $ alfred dismiss
+```
+
+
+You can even create a cronjob to run your tasks, let's say you have a task managing your database backups and you need to run it every day at 1:20am, is simple as that:
+```sh
+# Create a cronjob to run with the current user
+$ alfred cron "20 1 * * *" Database::Backup
+
+# If you want to create a cronjob for another user to run, pass the username like this
+$ alfred cron "@bruce 20 1 * * *" Database::Backup
 ```

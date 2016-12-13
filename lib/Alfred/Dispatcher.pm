@@ -51,9 +51,6 @@ Alfred - Easily manage your server tasks!
 
 
 * `crontime` must be a valid crontab interval.
-    e.g.:  "* * * * *"
-           "0 0,12 1 */2 *"
-           etc
 
 * Optionally, you can put a username with the crontime to run the task with
   the specified user, assuming the username you want to use is 'bruce', do:
