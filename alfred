@@ -22,7 +22,6 @@ use Try::Tiny;
 use Alfred::Cli;
 use Alfred::Dispatcher;
 
-
 my $order      = Alfred::Cli::get_order();
 my $task       = Alfred::Cli::get_task();
 my $dispatcher = Alfred::Dispatcher->new();
@@ -30,4 +29,4 @@ my $dispatcher = Alfred::Dispatcher->new();
 $order = 'help' unless $order and $order ne 'new';
 
 try   { $dispatcher->$order($task) }
-catch { die("$_\n\n") }
+catch { die("Invalid operation.\n\n") }
