@@ -15,7 +15,6 @@ use Alfred::Task;
 use Alfred::Queue;
 use Alfred::Daemon;
 
-
 ##
 ## Constructor
 sub new {
@@ -36,18 +35,19 @@ sub help {
 
 Alfred - Easily manage your server tasks!
 
-\$ alfred install                 - Install itself to the current user path.
-\$ alfred help                    - Show this help message.
-\$ alfred daemon                  - Starts Alfred daemon.
-\$ alfred dismiss                 - Stops Alfred daemon.
-\$ alfred list                    - List all available tasks.
-\$ alfred queue                   - List all tasks currently in the queue.
-\$ alfred help <task>             - Show help information for the given task.
-\$ alfred create <task>           - Create a new task.
-\$ alfred purge <task>            - Destroy the given task.
-\$ alfred run <task>              - Execute the given task.
-\$ alfred schedule <task>         - Add the given task to the daemon queue.
-\$ alfred cron <crontime> <task>  - Add a new crontab job to run the given task.
+\$ alfred install                   - Install itself to the current user path.
+\$ alfred help                      - Show this help message.
+\$ alfred daemon                    - Starts Alfred daemon.
+\$ alfred dismiss                   - Stops Alfred daemon.
+\$ alfred list                      - List all available tasks.
+\$ alfred queue                     - List all tasks currently in the queue.
+\$ alfred help <task>               - Show help information for the given task.
+\$ alfred create <task>             - Create a new task.
+\$ alfred purge <task>              - Destroy the given task.
+\$ alfred run <task>                - Execute the given task.
+\$ alfred run:remote <host> <task>  - Execute the given task in a remote server.
+\$ alfred schedule <task>           - Add the given task to the daemon queue.
+\$ alfred cron <crontime> <task>    - Add a new crontab job to run the given task.
 
 
 * `crontime` must be a valid crontab interval.
@@ -257,6 +257,19 @@ sub cron {
     };
 
     Alfred::Cron::new_job $cronjob;
+}
+
+
+##
+## RUN A TASK IN A REMOTE HOST
+sub run_remote {
+    my $self       = shift;
+    my $task       = shift;
+    my $remotename = $task->{task};
+
+    $task->{task} = shift @{$task->{options}};
+
+    Alfred::Remote::task_run $task, $remotename;
 }
 
 

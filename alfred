@@ -20,7 +20,9 @@ BEGIN {
 use Try::Tiny;
 
 use Alfred::Cli;
+use Alfred::Remote;
 use Alfred::Dispatcher;
+
 
 my $order      = Alfred::Cli::get_order();
 my $task       = Alfred::Cli::get_task();
