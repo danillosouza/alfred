@@ -11,6 +11,15 @@ $ git glone https://github.com/danillosouza/alfred.git
 $ cd alfred
 $ carton install
 ```
+In order to install one of the Perl modules used in Alfred(Net::SSH::Perl), you'll have to install the following package:
+
+```sh
+# with apt-get
+$ sudo apt-get install libgmp3-dev
+
+# with yum
+$ sudo yum install libgmp3-dev
+```
 
 Alfred dependencies are managed by Carton, a Perl module to isolate the packages you need to your project, without affecting your global Perl installation.
 To get Carton you onl need to:
@@ -27,17 +36,18 @@ $ perl -MCPAN -e install
 ## How do I use it?
 
 Alfred is very simple to use, it provides a few commands:
- * **install**                 - Install itself to the current user path.
- * **daemon**                  - Starts Alfred daemon.
- * **dismiss**                 - Stops Alfred daemon.
- * **list**                    - List all available tasks.
- * **queue**                   - List all tasks currently in the queue.
- * **help <task>**             - Show help information for the given task.
- * **create <task>**           - Create a new task.
- * **purge <task>**            - Destroy the given task.
- * **run <task>**              - Execute the given task.
- * **schedule <task>**         - Add the given task to the daemon queue.
- * **cron <crontime> <task>**  - Add a new crontab job to run the given task.
+ * **install**                   - Install itself to the current user path.
+ * **daemon**                    - Starts Alfred daemon.
+ * **dismiss**                   - Stops Alfred daemon.
+ * **list**                      - List all available tasks.
+ * **queue**                     - List all tasks currently in the queue.
+ * **help <task>**               - Show help information for the given task.
+ * **create <task>**             - Create a new task.
+ * **purge <task>**              - Destroy the given task.
+ * **run <task>**                - Execute the given task.
+ * **run:remote <host> <task>**  - Execute the given task in a remote server.
+ * **schedule <task>**           - Add the given task to the daemon queue.
+ * **cron <crontime> <task>**    - Add a new crontab job to run the given task.
 
 ### Some practical examples
 
@@ -101,4 +111,27 @@ $ alfred cron "20 1 * * *" Database::Backup
 
 # If you want to create a cronjob for another user to run, pass the username like this
 $ alfred cron "@bruce 20 1 * * *" Database::Backup
+```
+
+
+Alfred also can run tasks in a remote installation. In his root directory you'll find a file called `remotes.yaml`, containing the names and connection data for your remote servers running alfred instances, the file looks like this:
+```yaml
+---
+host1:
+    host: 192.168.0.10
+    port: 22
+    user: your-username
+    pass: your-password
+
+host2:
+    host: 192.168.0.20
+    port: 22
+    user: another-username
+    pass: another-password
+---
+```
+
+So when you feel the need to run a task in one of these remote instances, you would call Alfred like this:
+```sh
+$ alfred run:remote host1 Foo::Bar --my --params
 ```
