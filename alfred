@@ -31,4 +31,4 @@ my $dispatcher = Alfred::Dispatcher->new();
 $order = 'help' unless $order and $order ne 'new';
 
 try   { $dispatcher->$order($task) }
-catch { die("Invalid operation.\n\n") }
+catch { say($_); exit; }

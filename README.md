@@ -22,7 +22,7 @@ $ sudo yum install libgmp3-dev
 ```
 
 Alfred dependencies are managed by Carton, a Perl module to isolate the packages you need to your project, without affecting your global Perl installation.
-To get Carton you onl need to:
+To get Carton you only need to:
 
 ```sh
 # if you have cpanminus installed

@@ -10,6 +10,7 @@ use Try::Tiny;
 use YAML::Tiny;
 use Net::SSH::Perl;
 
+use Alfred::Cli;
 use Alfred::Logger;
 
 our @ISA       = qw/Exporter/;
@@ -25,10 +26,13 @@ sub task_run {
     my $remotename = shift;
     my $configfile = shift || 'remotes.yaml';
 
+    $configfile = Alfred::Cli::alfpath() . "/${configfile}";
+
     # reading config file
     try {
         my $yaml   = YAML::Tiny->read($configfile);
         my $config = $yaml->[0]{$remotename};
+
 
         # connecting via ssh
         try {
@@ -39,24 +43,31 @@ sub task_run {
             chomp $alfpath;
 
             try {
+                die unless $alfpath;
+
                 my $cmd       = $alfpath .' run '. $task->{task} .' '. join(' ', @{$task->{options}});
                 my($response) = $ssh->cmd($cmd);
                 chomp $response;
 
-                Alfred::Logger::success "REMOTE: ${response}";
+                Alfred::Logger::success $task->{task}, "\@${remotename}: ${response}";
+                say($response);
             }
             catch {
-                Alfred::Logger::error 'Unable to find an Alfred installation on remote host.';
+                Alfred::Logger::error $task->{task}, 'Unable to find an Alfred installation on remote host.';
+                say("Unable to find an Alfred installation on remote host.");
+                exit;
             }
         }
         catch {
-            Alfred::Logger::error 'Could not connect to remote server.';
-            die("Could not connect to remote server.\n");
+            Alfred::Logger::error $task->{task}, 'Could not connect to remote server.';
+            say("Could not connect to remote server.");
+            exit;
         }
     }
     catch {
-        Alfred::Logger::error 'Could not read remotes config file.';
-        die("Could not read remotes config file.\n");
+        Alfred::Logger::error $task->{task}, 'Could not read remotes config file.';
+        say("Could not read remotes config file.");
+        exit;
     }
 }
 

@@ -6,6 +6,9 @@ use strict;
 use autodie;
 use warnings;
 
+use File::Basename;
+use Cwd qw/abs_path/;
+
 our @ISA       = qw/Exporter/;
 our @EXPORT    = qw//;
 our @EXPORT_OK = qw//;
@@ -37,6 +40,13 @@ sub get_task {
     $task{options} = @ARGV ? \@ARGV      : undef;
 
     return \%task;
+}
+
+
+##
+## Return current Alfred installation path
+sub alfpath {
+    dirname abs_path $0;
 }
 
 42;
