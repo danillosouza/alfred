@@ -94,7 +94,10 @@ sub task_new {
     if (!-e $path) {
         eval {
             make_path dirname $path;
-            my $localpath = dirname(abs_path($0)).'/local/lib/perl5';
+            my $perl5lib  = $ENV{PERL5LIB};
+            my $localpath = $perl5lib
+                            ? '$ENV{PERL5PATH}'
+                            : "'". dirname(abs_path($0)).'/local/lib/perl5' ."'";
 
             # file content
             open(my $FH, '>', $path);
@@ -103,7 +106,7 @@ package ${task};
 require Exporter;
 
 BEGIN {
-    push \@INC, '${localpath}'
+    push \@INC, ${localpath}
 }
 
 use 5.10.0;
